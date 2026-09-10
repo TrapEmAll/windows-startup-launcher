@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$scriptPath = Join-Path $PSScriptRoot '..\outputs\Open-ChatGPT-Discord-Xbox.ps1'
+$scriptPath = Join-Path $PSScriptRoot '..\outputs\Windows-Startup-Routine.ps1'
 $errors = $null
 [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $scriptPath), [ref]$null, [ref]$errors) | Out-Null
 if ($errors) { throw ($errors | ForEach-Object Message | Out-String) }
@@ -18,6 +18,21 @@ foreach ($feature in 31..40) {
 }
 foreach ($feature in 41..50) {
     if ($content -notmatch "\b$feature\s*[{=]") { throw "Missing feature $feature" }
+}
+foreach ($feature in 51..60) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
+foreach ($feature in 61..70) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
+foreach ($feature in 71..80) {
+    if ($content -notmatch "\b$feature\s*{") { throw "Missing feature $feature" }
+}
+foreach ($feature in 81..90) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
+foreach ($feature in 91..100) {
+    if ($content -notmatch "\b$feature\s*{") { throw "Missing feature $feature" }
 }
 Write-Host 'Launcher tests passed.'
 
