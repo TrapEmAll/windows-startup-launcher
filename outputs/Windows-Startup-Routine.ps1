@@ -15,6 +15,8 @@ $script:Config = [ordered]@{
     StartupDelaySeconds = 3
     PerAppDelaySeconds = 1
     PreventDuplicates = $true
+    # Optional menu features are manual-only and enabled here by number.
+    EnabledFeatures = 11..200
     LogFile = Join-Path $env:TEMP 'startup-launcher.log'
 }
 
@@ -46,6 +48,11 @@ function Start-ProtocolApp {
     Start-Process $Protocol
     Write-LauncherLog "Started protocol: $Label"
     return $true
+}
+
+function Test-FeatureEnabled {
+    param([int]$Feature)
+    return ($script:Config.EnabledFeatures -contains $Feature)
 }
 
 function Invoke-AppStartup {
@@ -315,7 +322,15 @@ function Show-LauncherMenu {
             '6' { Start-Process ([Environment]::GetFolderPath('MyDocuments')) }
             '7' { if (Test-Path $script:Config.LogFile) { Get-Content $script:Config.LogFile | Select-Object -Last 30 }; Read-Host 'Press Enter' }
             '8' { return }
-            { $_ -match '^1[1-9]$|^20$|^2[1-9]$|^3[0-9]$|^4[0-9]$|^5[0-9]$|^6[0-9]$|^7[0-9]$|^8[0-9]$|^9[0-9]$|^1[0-9][0-9]$|^200$' } { Invoke-UtilityFeature ([int]$_); Read-Host 'Press Enter' }
+            { $_ -match '^1[1-9]$|^20$|^2[1-9]$|^3[0-9]$|^4[0-9]$|^5[0-9]$|^6[0-9]$|^7[0-9]$|^8[0-9]$|^9[0-9]$|^1[0-9][0-9]$|^200$' } {
+                $selectedFeature = [int]$_
+                if (-not (Test-FeatureEnabled $selectedFeature)) {
+                    Write-Warning "Feature $selectedFeature is disabled in configuration."
+                } else {
+                    Invoke-UtilityFeature $selectedFeature
+                }
+                Read-Host 'Press Enter'
+            }
             default { Write-Host 'Invalid option'; Start-Sleep -Seconds 1 }
         }
     } while ($true)
