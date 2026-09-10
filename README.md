@@ -20,6 +20,16 @@ Optional manual modes:
 
 Place a shortcut using the first command in `shell:startup` for login launch.
 
+## Configuration
+
+Edit the `$script:Config` block near the top of the script. Set app toggles to `$false`, adjust delays, or restrict optional interactive features with `EnabledFeatures`, for example:
+
+```powershell
+EnabledFeatures = @(11, 12, 21, 31, 61)
+```
+
+Disabled optional features never run automatically and are rejected when selected from the interactive menu.
+
 ## Testing
 
 ```powershell
