@@ -1,0 +1,17 @@
+name: PowerShell CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run launcher tests
+        shell: pwsh
+        run: ./tests/Test-Launcher.ps1
+
