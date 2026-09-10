@@ -178,6 +178,77 @@ function Invoke-UtilityFeature {
         90 = (Split-Path $PSScriptRoot -Parent)
     }
     if ($workspaceTargets.ContainsKey($Feature)) { Start-Process $workspaceTargets[$Feature]; return }
+    $utilityTargets = @{
+        101='mspaint.exe'; 102='write.exe'; 103='charmap.exe'; 104='magnify.exe'; 105='osk.exe'
+        106='eventvwr.msc'; 107='perfmon.exe'; 108='resmon.exe'; 109='msinfo32.exe'; 110='winver.exe'
+    }
+    if ($utilityTargets.ContainsKey($Feature)) { Start-Process $utilityTargets[$Feature]; return }
+    $controlPanels = @{
+        111='appwiz.cpl'; 112='desk.cpl'; 113='intl.cpl'; 114='main.cpl'; 115='powercfg.cpl'
+        116='sysdm.cpl'; 117='firewall.cpl'; 118='timedate.cpl'; 119='wscui.cpl'; 120='hdwwiz.cpl'
+    }
+    if ($controlPanels.ContainsKey($Feature)) { Start-Process $controlPanels[$Feature]; return }
+    $shellTargets = @{
+        121='shell:AccountPictures'; 122='shell:AppData'; 123='shell:Common AppData'; 124='shell:Common Desktop'
+        125='shell:Common Documents'; 126='shell:Common Downloads'; 127='shell:Common Pictures'
+        128='shell:Common Music'; 129='shell:Common Videos'; 130='shell:Local AppData'
+    }
+    if ($shellTargets.ContainsKey($Feature)) { Start-Process $shellTargets[$Feature]; return }
+    $developerApps = @{
+        131='Docker'; 132='Postman'; 133='Visual Studio$'; 134='PyCharm'; 135='FileZilla'
+        136='PuTTY'; 137='7-Zip'; 138='WinRAR'; 139='OBS Studio'; 140='Git Bash'
+    }
+    if ($developerApps.ContainsKey($Feature)) { [void](Start-InstalledApp $developerApps[$Feature]); return }
+    $referenceSites = @{
+        141='https://learn.microsoft.com/'; 142='https://learn.microsoft.com/powershell/'
+        143='https://git-scm.com/doc'; 144='https://docs.github.com/'; 145='https://developer.mozilla.org/'
+        146='https://stackoverflow.com/'; 147='https://www.w3.org/'; 148='https://www.python.org/doc/'
+        149='https://docs.docker.com/'; 150='https://www.powershellgallery.com/'
+    }
+    if ($referenceSites.ContainsKey($Feature)) { Start-Process $referenceSites[$Feature]; return }
+    switch ($Feature) {
+        151 { Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, MaxClockSpeed | Format-List }
+        152 { Get-CimInstance Win32_VideoController | Select-Object Name, DriverVersion | Format-List }
+        153 { Get-CimInstance Win32_BIOS | Select-Object Manufacturer, SMBIOSBIOSVersion, ReleaseDate | Format-List }
+        154 { Get-CimInstance Win32_BaseBoard | Select-Object Manufacturer, Product, SerialNumber | Format-List }
+        155 { Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, FileSystem, Size, FreeSpace | Format-Table -AutoSize }
+        156 { Get-Printer | Select-Object Name, DriverName, PrinterStatus | Format-Table -AutoSize }
+        157 { Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 20 HotFixID, InstalledOn | Format-Table -AutoSize }
+        158 { Get-ComputerRestorePoint -ErrorAction SilentlyContinue | Select-Object -Last 10 | Format-Table -AutoSize }
+        159 { Get-ScheduledTask | Where-Object State -ne Disabled | Select-Object -First 30 TaskName, State | Format-Table -AutoSize }
+        160 { Get-Process | Group-Object Responding | Select-Object Name, Count | Format-Table -AutoSize }
+        161 { ipconfig /all }
+        162 { ping.exe 1.1.1.1 -n 4 }
+        163 { nslookup.exe example.com }
+        164 { tracert.exe -h 5 1.1.1.1 }
+        165 { route.exe print }
+        166 { netstat.exe -ano }
+        167 { arp.exe -a }
+        168 { hostname.exe }
+        169 { whoami.exe /all }
+        170 { systeminfo.exe }
+        171 { Clear-DnsClientCache; Write-Host 'DNS cache flushed.' }
+        172 { Get-NetIPConfiguration | Format-List }
+        173 { Get-NetRoute -AddressFamily IPv4 | Format-Table -AutoSize }
+        174 { Get-DnsClientServerAddress | Format-Table -AutoSize }
+        175 { Get-NetFirewallProfile | Select-Object Name, Enabled | Format-Table -AutoSize }
+        176 { Get-NetAdapterStatistics | Format-Table -AutoSize }
+        177 { Get-WinEvent -LogName System -MaxEvents 20 | Select-Object TimeCreated, Id, LevelDisplayName, Message | Format-List }
+        178 { Get-WinEvent -LogName Application -MaxEvents 20 | Select-Object TimeCreated, Id, LevelDisplayName, Message | Format-List }
+        179 { Get-EventLog -LogName System -Newest 20 | Format-Table -AutoSize }
+        180 { Get-EventLog -LogName Application -Newest 20 | Format-Table -AutoSize }
+    }
+    $mediaApps = @{
+        181='Photos'; 182='Camera'; 183='Media Player'; 184='Xbox Game Bar'; 185='Movies & TV'
+        186='Groove Music'; 187='Clipchamp'; 188='HEIF Image Extensions'; 189='AV1 Video Extension'; 190='Windows Media Player'
+    }
+    if ($mediaApps.ContainsKey($Feature)) { [void](Start-InstalledApp $mediaApps[$Feature]); return }
+    $settingsTargets = @{
+        191='ms-settings:easeofaccess-display'; 192='ms-settings:easeofaccess-keyboard'; 193='ms-settings:easeofaccess-mouse'
+        194='ms-settings:notifications'; 195='ms-settings:storagesense'; 196='ms-settings:about'
+        197='ms-settings:recovery'; 198='ms-settings:optionalfeatures'; 199='ms-settings:privacy-notifications'; 200='ms-settings:clipboard'
+    }
+    if ($settingsTargets.ContainsKey($Feature)) { Start-Process $settingsTargets[$Feature]; return }
     switch ($Feature) {
         91 { $note = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'startup-routine-note.txt'; if (-not (Test-Path $note)) { New-Item -ItemType File -Path $note | Out-Null }; Start-Process notepad.exe $note }
         92 { $note = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'startup-routine-note.txt'; if (Test-Path $note) { Start-Process notepad.exe $note } else { Write-Warning 'Note file does not exist. Use feature 91 first.' } }
@@ -225,6 +296,16 @@ function Show-LauncherMenu {
         Write-Host '71-80. Read-only diagnostics'
         Write-Host '81-90. Workspace navigation'
         Write-Host '91-100. Notes, clipboard, and help'
+        Write-Host '101-110. Windows utilities'
+        Write-Host '111-120. Control panels'
+        Write-Host '121-130. Shell folders'
+        Write-Host '131-140. Developer tools'
+        Write-Host '141-150. Reference websites'
+        Write-Host '151-160. Hardware diagnostics'
+        Write-Host '161-170. Network diagnostics'
+        Write-Host '171-180. Network and event tools'
+        Write-Host '181-190. Media applications'
+        Write-Host '191-200. Accessibility and settings'
         switch (Read-Host 'Choose an option') {
             '1' { Invoke-AppStartup; Read-Host 'Press Enter' }
             '2' { Invoke-SelfTest; Read-Host 'Press Enter' }
@@ -234,7 +315,7 @@ function Show-LauncherMenu {
             '6' { Start-Process ([Environment]::GetFolderPath('MyDocuments')) }
             '7' { if (Test-Path $script:Config.LogFile) { Get-Content $script:Config.LogFile | Select-Object -Last 30 }; Read-Host 'Press Enter' }
             '8' { return }
-            { $_ -match '^1[1-9]$|^20$|^2[1-9]$|^3[0-9]$|^4[0-9]$|^5[0-9]$|^60$' } { Invoke-UtilityFeature ([int]$_); Read-Host 'Press Enter' }
+            { $_ -match '^1[1-9]$|^20$|^2[1-9]$|^3[0-9]$|^4[0-9]$|^5[0-9]$|^6[0-9]$|^7[0-9]$|^8[0-9]$|^9[0-9]$|^1[0-9][0-9]$|^200$' } { Invoke-UtilityFeature ([int]$_); Read-Host 'Press Enter' }
             default { Write-Host 'Invalid option'; Start-Sleep -Seconds 1 }
         }
     } while ($true)
