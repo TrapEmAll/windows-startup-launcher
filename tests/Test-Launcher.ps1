@@ -34,5 +34,20 @@ foreach ($feature in 81..90) {
 foreach ($feature in 91..100) {
     if ($content -notmatch "\b$feature\s*{") { throw "Missing feature $feature" }
 }
+foreach ($feature in 101..110) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
+foreach ($feature in 111..130) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
+foreach ($feature in 131..150) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
+foreach ($feature in 151..180) {
+    if ($content -notmatch "\b$feature\s*{") { throw "Missing feature $feature" }
+}
+foreach ($feature in 181..200) {
+    if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
+}
 Write-Host 'Launcher tests passed.'
 
