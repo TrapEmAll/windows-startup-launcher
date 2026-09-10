@@ -7,6 +7,9 @@ $content = Get-Content -LiteralPath $scriptPath -Raw
 foreach ($required in @('$Interactive','$Test','$DryRun','$NoApps','Start-InstalledApp','Start-ProtocolApp','exit 0')) {
     if ($content -notmatch [regex]::Escape($required)) { throw "Missing required capability: $required" }
 }
+foreach ($required in @('EnabledFeatures','Test-FeatureEnabled','disabled in configuration')) {
+    if ($content -notmatch [regex]::Escape($required)) { throw "Missing configuration capability: $required" }
+}
 foreach ($feature in 11..20) {
     if ($content -notmatch "\b$feature\s*=") { throw "Missing feature $feature" }
 }
